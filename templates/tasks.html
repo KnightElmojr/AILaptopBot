@@ -1,0 +1,39 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card p-3 shadow-sm mb-4">
+            <h4>Додати завдання</h4>
+            {% if current_user.is_authenticated %}
+            <form method="POST">
+                <div class="mb-3">
+                    <input type="text" name="title" class="form-control" placeholder="Назва завдання" required>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Додати</button>
+            </form>
+            {% else %}
+            <p class="text-muted">Тільки авторизовані користувачі можуть додавати завдання.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <h3>Список завдань</h3>
+        <ul class="list-group">
+            {% for task in tasks %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ task.title }}</strong>
+                </div>
+                {% if current_user.is_authenticated %}
+                <div>
+                    <a href="/edit/{{ task.id }}" class="btn btn-sm btn-outline-secondary">Редагувати</a>
+                    <a href="/delete/{{ task.id }}" class="btn btn-sm btn-danger" onclick="return confirm('Видалити?')">Видалити</a>
+                </div>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

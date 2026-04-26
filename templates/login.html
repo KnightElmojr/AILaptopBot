@@ -1,0 +1,28 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-4 card p-4 shadow-sm">
+        <h2 class="text-center">{{ 'Реєстрація' if register_mode else 'Вхід' }}</h2>
+        <form method="POST">
+            <div class="mb-3">
+                <label>Логін:</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Пароль:</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-dark w-100">
+                {{ 'Зареєструватися' if register_mode else 'Увійти' }}
+            </button>
+        </form>
+        <div class="mt-3 text-center">
+            {% if register_mode %}
+                <a href="/login">Вже є аккаунт? Увійдіть</a>
+            {% else %}
+                <a href="/register">Немає аккаунту? Створіть його</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,17 +1,12 @@
-import sqlite3
+from web_app import app
+from models import db, LaptopSelection
 
 def init_db():
-    conn = sqlite3.connect('laptops.db')
-    cursor = conn.cursor()
-    cursor.execute('''CREATE TABLE IF NOT EXISTS selections 
-                      (user_id INTEGER, category TEXT)''')
-    conn.commit()
-    conn.close()
+    with app.app_context():
+        db.create_all()
 
 def log_selection(user_id, category):
-    conn = sqlite3.connect('laptops.db')
-    cursor = conn.cursor()
-    cursor.execute('INSERT OR REPLACE INTO selections (user_id, category) VALUES (?, ?)',
-                   (user_id, category))
-    conn.commit()
-    conn.close()
+    with app.app_context():
+        new_selection = LaptopSelection(user_id=user_id, category=category)
+        db.session.add(new_selection)
+        db.session.commit()

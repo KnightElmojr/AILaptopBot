@@ -1,0 +1,38 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="card shadow">
+    <div class="card-header bg-primary text-white">Чат підтримки та сповіщень</div>
+    <div id="chat-box" class="card-body" style="height: 300px; overflow-y: auto; background: #f8f9fa;">
+        </div>
+    <div class="card-footer">
+        <div class="input-group">
+            <input type="text" id="user-msg" class="form-control" placeholder="Напишіть повідомлення...">
+            <button class="btn btn-success" onclick="sendMessage()">Надіслати</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+<script>
+    const socket = io();
+
+    socket.on('receive_message', function(data) {
+        const chatBox = document.getElementById('chat-box');
+        const newMessage = document.createElement('div');
+        newMessage.innerHTML = `<strong>${data.user}:</strong> ${data.msg}`;
+        chatBox.appendChild(newMessage);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        if (data.msg.includes("додав завдання")) {
+            alert("Сповіщення: " + data.msg); 
+        }
+    });
+
+    function sendMessage() {
+        const input = document.getElementById('user-msg');
+        if (input.value) {
+            socket.emit('send_message', {message: input.value});
+            input.value = '';
+        }
+    }
+</script>
+{% endblock %}

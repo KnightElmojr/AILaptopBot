@@ -1,0 +1,16 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="card p-4 shadow-sm">
+    <h2>Форма привітання</h2>
+    {% if name %}
+        <div class="alert alert-success">Привіт, {{ name }}! Раді тебе бачити.</div>
+    {% endif %}
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label">Введіть ваше ім'я:</label>
+            <input type="text" name="name" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Надіслати</button>
+    </form>
+</div>
+{% endblock %}
