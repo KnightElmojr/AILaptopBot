@@ -101,6 +101,12 @@ def add_task_api():
     return jsonify({"message": "Task created"}), 201
 
 
+@app.route('/api/tasks', methods=['GET'])
+def get_tasks_api():
+    tasks = Task.query.all()
+    return jsonify([{"id": t.id, "title": t.title} for t in tasks])
+
+
 @app.route('/delete/<int:id>')
 @login_required
 def delete_task(id):
@@ -112,28 +118,28 @@ def delete_task(id):
             db.session.commit()
             return redirect(url_for('tasks'))
         else:
-            return "У вас немає прав для видалення цього завдання", 403
+            return "У вас немає прав для видалення", 403
 
     return "Завдання не знайдено", 404
 
-@app.route('/api/tasks', methods=['GET'])
-def get_tasks_api():
-    tasks = Task.query.all()
-    return jsonify([{"id": t.id, "title": t.title} for t in tasks])
 
+@app.route('/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_task(id):
+    task = db.session.get(Task, id)
 
-@app.route('/api/tasks/<int:id>', methods=['PUT'])
-def edit_task_api(id):
-    task = Task.query.get(id)
     if not task:
-        return jsonify({"error": "Task not found"}), 404
+        return "Завдання не знайдено", 404
 
-    data = request.json
-    if 'title' in data:
-        task.title = data['title']
+    if task.user_id != current_user.id:
+        return "У вас немає прав для редагування", 403
 
-    db.session.commit()
-    return jsonify({"message": "Task updated successfully"}), 200
+    if request.method == 'POST':
+        task.title = request.form.get('title')
+        db.session.commit()
+        return redirect(url_for('tasks'))
+
+    return render_template('edit.html', task=task)
 
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
